@@ -21,6 +21,16 @@ async def on_ready():
     newgame = discord.Game(name="with your mom")
     await client.change_status(game=newgame, idle=False)
 
+client.counter = 0
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    client.counter = client.counter + 1
+    if client.annoy and client.counter > 5:
+        await client.send_message(message.channel,'Hum')
+        client.counter = 0
+    await client.process_commands(message)
 #-----------------------Defining bot commands-------------------------------------------------
 @client.command()
 async def roll(dice : str):
@@ -108,7 +118,14 @@ async def whoplays(ctx,date : str):
     except FileNotFoundError:
               await client.say('Personne n\'est encore inscrit a cette date')
 
-
+client.annoy = False
+@client.command(pass_context=True)
+async def annoy(ctx):
+    """Surprise"""
+    if ctx.message.author.id  == '101590011652096000':
+        client.annoy = not client.annoy
+    else:
+        await client.say('Toi t\'as pas le droit !')
 #-----------------------Defining background tasks-------------------------------------------------
 #This task will run in background and will remind everyone to go training 1hour beforehand
 async def check_training():
@@ -132,4 +149,4 @@ async def check_training():
 client.loop.create_task(check_training())
 
 #-----------------------Connectiong client-------------------------------------------------
-client.run('MTkzNDk3MzA1MDEyMjQwMzg1.CkYP6A.dx6V_0bgCAsaa5GkRDr8ZEA6beg')
+client.run('MTk1NTEzNjMyMzI1NTAwOTI4.Ck1pGg.QXy7_6epx1q3ex-qSv3oXwjB0CQ')
