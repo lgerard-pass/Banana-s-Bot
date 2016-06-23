@@ -4,6 +4,7 @@ import datetime
 import random
 import discord
 import asyncio
+from client.games.hangman import *
 
 class bananaBot():
     #Constructor
@@ -14,6 +15,7 @@ class bananaBot():
         #Defining bot inner variables
         self.client.annoy = False
         self.client.msg_counter = 0
+        self.game_running = False
 
         # -----------------------Defining events-------------------------------------------------
         @self.client.event
@@ -49,7 +51,46 @@ class bananaBot():
             else:
                 result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
                 await self.client.say(result)
-    
+
+        @self.client.command()
+        async def hangman():
+            """Launch a hangman game."""
+            if self.game_running:
+                await self.client.say("Une partie est déjà en cours, attendez la fin !")
+                return
+            self.game_running = True
+            remaining_tries = nb_tries
+            found_letters = []
+            word = selectWord().upper()
+            print(word)
+            revealedWord = get_revealed_word(word,found_letters)
+            print(revealedWord)
+            await self.client.say('Allez c\'est tipar')
+            won = False
+            lost = False
+            while not(won) and not(lost):
+                await self.client.say("```" + revealedWord + '\n' + "Tentatives restantes : "  + str(remaining_tries) + "```")
+                answer = await self.client.wait_for_message(timeout=10.0, check=hang_check)
+                if answer is None :
+                    await self.client.say("Vous avez été trop long(s), il faut répondre sous 10 secondes\nFin de la partie")
+                    self.game_running = False
+                    return
+                else:
+                    answer = answer.content.upper()
+                    if answer in found_letters:
+                        await self.client.say("Vous avez déjà choisi cette lettre.")
+                    elif answer in word:
+                        found_letters.append(answer)
+                    else:
+                        remaining_tries -= 1
+                    revealedWord = get_revealed_word(word,found_letters)
+                won,lost = evaluate_game(word,revealedWord,remaining_tries)
+            if won :
+                await self.client.say("```Bien joué ! Le mot était : " + word + "```")
+            else :
+                await self.client.say("```Vous êtes mauvais ! Le mot était : " + word + "```")
+            self.game_running = False
+
         @self.client.command(pass_context=True)
         async def register(ctx, date: str):
             """Format : DD-MM. Register for GO4 at given date"""
@@ -155,5 +196,5 @@ class bananaBot():
             await asyncio.sleep(3600)  # task runs every hour
 
     def run(self):
-        self.client.loop.create_task(self.check_training())
+        #self.client.loop.create_task(self.check_training())
         return self.client.run(self.token)
