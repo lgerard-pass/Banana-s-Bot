@@ -55,7 +55,7 @@ class bananaBot():
         @self.client.command(pass_context=True)
         async def hangman(ctx):
             """Launch a hangman game."""
-            if ctx.message.channel.id != game_channel_id:
+            if ctx.message.channel.id == game_channel_id:
                 if self.game_running:
                     await self.client.say("Une partie est déjà en cours, attendez la fin !")
                     return
@@ -91,6 +91,8 @@ class bananaBot():
                 else :
                     await self.client.say("```Vous êtes mauvais ! Le mot était : " + word + "```")
                 self.game_running = False
+            else:
+                await self.client.say("Wrong chat, go to : " + discord.Object(id).mention)
 
         @self.client.command(pass_context=True)
         async def register(ctx, date: str):
