@@ -196,5 +196,5 @@ class bananaBot():
             await asyncio.sleep(3600)  # task runs every hour
 
     def run(self):
-        #self.client.loop.create_task(self.check_training())
+        self.client.loop.create_task(self.check_training())
         return self.client.run(self.token)
