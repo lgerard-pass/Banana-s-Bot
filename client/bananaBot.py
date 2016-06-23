@@ -93,7 +93,7 @@ class bananaBot():
                 self.game_running = False
             else:
                 if not(ctx.message.server is None):
-                    await self.client.say("Wrong chat, go to : " + ctx.message.server.get_channel(game_channel_id))
+                    await self.client.say("Wrong chat, go to : " + ctx.message.server.get_channel(game_channel_id).mention)
 
         @self.client.command(pass_context=True)
         async def register(ctx, date: str):
