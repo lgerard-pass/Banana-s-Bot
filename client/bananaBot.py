@@ -92,7 +92,7 @@ class bananaBot():
                     await self.client.say("```Vous êtes mauvais ! Le mot était : " + word + "```")
                 self.game_running = False
             else:
-                await self.client.say("Wrong chat, go to : " + discord.Object(id).mention)
+                await self.client.say("Wrong chat, go to : " + discord.Object(id=game_channel_id).mention)
 
         @self.client.command(pass_context=True)
         async def register(ctx, date: str):
