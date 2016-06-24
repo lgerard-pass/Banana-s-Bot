@@ -1,7 +1,7 @@
 from discord.ext import commands
 from .constants import *
 import datetime
-import random
+from client.cogs.overwatch import setup as setup_ow
 import discord
 import asyncio
 from client.games.hangman import *
@@ -36,7 +36,10 @@ class bananaBot():
                 await self.client.send_message(message.channel, 'Hum')
                 self.client.msg_counter = 0
             await self.client.process_commands(message)
-        
+
+        #------------------------Defining cogs---------------------------------------------------------
+        setup_ow(self.client)
+
         # -----------------------Defining bot commands-------------------------------------------------
         @self.client.command()
         async def roll(dice: str):
@@ -96,81 +99,6 @@ class bananaBot():
                     await self.client.say("Wrong chat, go to : " + ctx.message.server.get_channel(game_channel_id).mention)
 
         @self.client.command(pass_context=True)
-        async def register(ctx, date: str):
-            """Format : DD-MM. Register for GO4 at given date"""
-            if (ctx.message.channel.id == overwatchChannelId):
-                try:
-                    member = ctx.message.author
-                    day, month = map(int, date.split('-'))
-                    my_date = datetime.date(datetime.datetime.now().year, month, day)
-                    if my_date < datetime.date.today() or (my_date.weekday() != 2 and my_date.weekday() != 6):
-                        raise ValueError()
-                    f = open('GO4_' + str(my_date) + '.reg', 'a+')
-                    position = f.seek(0, 0)
-                    content = f.read()
-                    if member.name in content:
-                        await self.client.say('Tu t\'es deja inscrit champion !')
-                    else:
-                        position = f.seek(0, 2)
-                        f.write(member.name + ' ' + str(datetime.datetime.now()) + '\n')
-                        await self.client.say('Inscription prise en compte')
-                    f.close()
-                except ValueError:
-                    await self.client.say('Erreur dans la date donnee')
-    
-        @self.client.command(pass_context=True)
-        async def unregister(ctx, date: str):
-            """Format : DD-MM. Unregister for GO4 at given date"""
-            if(ctx.message.channel.id == overwatchChannelId):
-                try:
-                    member = ctx.message.author
-                    day, month = map(int, date.split('-'))
-                    my_date = datetime.date(datetime.datetime.now().year, month, day)
-                    if my_date < datetime.date.today() or (my_date.weekday() != 2 and my_date.weekday() != 6):
-                        raise ValueError()
-                    f = open('GO4_' + str(my_date) + '.reg', 'r')
-                    f.seek(0, 0)
-                    lines = f.readlines()
-                    found = False
-                    for line in lines:
-                        if (line.startswith(member.name)):
-                            lines.remove(line)
-                            found = True
-                    f.close()
-                    if not found:
-                        raise LookupError()
-                    f = open('GO4_' + str(my_date) + '.reg', 'w')
-                    f.seek(0, 0)
-                    for line in lines:
-                        f.write(line)
-                    f.close()
-                    await self.client.say('Desinscription prise en compte')
-                except ValueError:
-                    await self.client.say('Erreur dans la date donnee')
-                except LookupError:
-                    await self.client.say('Tu n\'etais pas inscrit a cette date')
-    
-        @self.client.command(pass_context=True)
-        async def whoplays(ctx, date: str):
-            """Format : DD-MM. Says who registered for GO4 at given date"""
-            if (ctx.message.channel.id == overwatchChannelId):
-                try:
-                    day, month = map(int, date.split('-'))
-                    my_date = datetime.date(datetime.datetime.now().year, month, day)
-                    if my_date < datetime.date.today() or (my_date.weekday() != 2 and my_date.weekday() != 6):
-                        raise ValueError()
-                    f = open('GO4_' + str(my_date) + '.reg', 'r')
-                    content = f.read()
-                    if content == '':
-                        raise FileNotFoundError()
-                    await self.client.say(content)
-                    f.close()
-                except ValueError:
-                    await self.client.say('Erreur dans la date donnee')
-                except FileNotFoundError:
-                    await self.client.say('Personne n\'est encore inscrit a cette date')
-    
-        @self.client.command(pass_context=True)
         async def annoy(ctx):
             """Surprise"""
             if ctx.message.author.id == adminId:
@@ -178,9 +106,9 @@ class bananaBot():
             else:
                 await self.client.say('Toi t\'as pas le droit !')
 
-                # -----------------------Defining background tasks-------------------------------------------------
+    # -----------------------Defining background tasks-------------------------------------------------
 
-        # This task will run in background and will remind everyone to go training 1 hour beforehand
+    # This task will run in background and will remind everyone to go training 1 hour beforehand
     async def check_training(self):
         await self.client.wait_until_ready()
         channel = discord.Object(id=overwatchChannelId)  # SENDS TO CHANNEL OVERWATCH IN BANANA'S DISCORD
