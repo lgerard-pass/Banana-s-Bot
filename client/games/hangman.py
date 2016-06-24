@@ -18,7 +18,7 @@ def get_revealed_word(word, found_letters):
         if letter in found_letters:
             revealed_word += letter
         else:
-            revealed_word += "*"
+            revealed_word += "#"
     return revealed_word
 
 

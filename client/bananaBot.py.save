@@ -9,7 +9,7 @@ from client.games.hangman import *
 class bananaBot():
     #Constructor
     def __init__(self,token):
-        self.client = commands.Bot(command_prefix=commands.when_mentioned_or('!'),description=clientDesc)
+        self.client = commands.Bot(command_prefix='!', description=clientDesc)
         self.token = token
 
         #Defining bot inner variables
