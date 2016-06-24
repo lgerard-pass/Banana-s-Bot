@@ -1,7 +1,6 @@
 from discord.ext import commands
 from client.constants import *
 import datetime
-from client.errors import WrongChannelError
 from client.util.util import parseDate
 
 class Overwatch:

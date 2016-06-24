@@ -2,6 +2,7 @@ from discord.ext import commands
 from .constants import *
 import datetime
 from client.cogs.overwatch import setup as setup_ow
+from client.cogs.miscellaneous import setup as setup_misc
 import discord
 import asyncio
 from client.games.hangman import *
@@ -39,22 +40,9 @@ class bananaBot():
 
         #------------------------Defining cogs---------------------------------------------------------
         setup_ow(self.client)
+        setup_misc(self.client)
 
         # -----------------------Defining bot commands-------------------------------------------------
-        @self.client.command()
-        async def roll(dice: str):
-            """Rolls a dice in NdN format."""
-            try:
-                rolls, limit = map(int, dice.split('d'))
-            except Exception:
-                await self.client.say('Format has to be in NdN!')
-                return
-            if rolls > 200 or rolls < 1 or limit > 500 or limit < 2:
-                await self.client.say('T\'as que ca a branler de faire des jets pourraves ?')
-            else:
-                result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
-                await self.client.say(result)
-
         @self.client.command(pass_context=True)
         async def hangman(ctx):
             """Launch a hangman game."""
