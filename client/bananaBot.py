@@ -14,29 +14,7 @@ class bananaBot():
         self.token = token
 
         #Defining bot inner variables
-        self.client.annoy = False
-        self.client.msg_counter = 0
         self.game_running = False
-
-        # -----------------------Defining events-------------------------------------------------
-        @self.client.event
-        async def on_ready():
-            print('Logged in as')
-            print(self.client.user.name)
-            print(self.client.user.id)
-            print('------')
-            newgame = discord.Game(name="with your mom")
-            await self.client.change_status(game=newgame, idle=False)
-
-        @self.client.event
-        async def on_message(message):
-            if message.author == self.client.user:
-                return
-            self.client.msg_counter = self.client.msg_counter + 1
-            if self.client.annoy and self.client.msg_counter > 5:
-                await self.client.send_message(message.channel, 'Hum')
-                self.client.msg_counter = 0
-            await self.client.process_commands(message)
 
         #------------------------Defining cogs---------------------------------------------------------
         setup_ow(self.client)
@@ -86,35 +64,10 @@ class bananaBot():
                 if not(ctx.message.server is None):
                     await self.client.say("Wrong chat, go to : " + ctx.message.server.get_channel(game_channel_id).mention)
 
-        @self.client.command(pass_context=True)
-        async def annoy(ctx):
-            """Surprise"""
-            if ctx.message.author.id == adminId:
-                self.client.annoy = not self.client.annoy
-            else:
-                await self.client.say('Toi t\'as pas le droit !')
+
 
     # -----------------------Defining background tasks-------------------------------------------------
 
-    # This task will run in background and will remind everyone to go training 1 hour beforehand
-    async def check_training(self):
-        await self.client.wait_until_ready()
-        channel = discord.Object(id=overwatchChannelId)  # SENDS TO CHANNEL OVERWATCH IN BANANA'S DISCORD
-        while not self.client.is_closed:
-            now = datetime.datetime.now()
-            if now.weekday() == 0 or now.weekday() == 3:
-                if now.hour == 20:
-                    role = discord.utils.find(lambda r: r.name == 'overwatch_players',
-                                              self.client.get_server(bananasDiscordId).roles)
-                    message = role.mention + ' Yo mes ptits poulets, oubliez pas le training de ce soir de 21h a 23h, sinon Loulou il va raler !'
-                    await self.client.send_message(channel, message)
-            elif now.weekday() == 5:
-                if now.hour == 15:
-                    role = discord.utils.find(lambda r: r.name == 'overwatch_players', self.client.get_server(bananasDiscordId).roles)
-                    message = role.mention + ' Yo mes ptits poulets, oubliez pas le training de cette apres-midi de 16h a 18h, sinon Loulou il va raler !'
-                    await self.client.send_message(channel, message)
-            await asyncio.sleep(3600)  # task runs every hour
 
     def run(self):
-        self.client.loop.create_task(self.check_training())
         return self.client.run(self.token)
