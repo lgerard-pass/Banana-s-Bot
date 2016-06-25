@@ -33,6 +33,36 @@ class Miscellaneous:
         else:
             await self.bot.reply('Toi t\'as pas le droit !')
 
+    @commands.command(pass_context=True, hidden=True,no_pm=True)
+    async def oracle(self, ctx, question:str):
+        """Answers a very important question"""
+        if ctx.message.author != self.bot.user:
+            n = random.randint(0, 7) == 0
+            if(n == 0):
+                str = 'J\'ai besoin de temps pour me concentrer !'
+            elif(n == 1):
+                str = 'Oui'
+            elif(n == 2):
+                str = 'Non'
+            elif(n == 3):
+                str = 'Je ne peux pas répondre à cette question'
+            elif(n == 4):
+                str = 'Oui mais honnêtement je suis pas sur, au pire lance un dé'
+            elif(n == 5):
+                str = 'Concrétement c\'est mort'
+            elif(n == 6):
+                str = 'A mon avis non'
+            elif(n == 7):
+                str = 'Non, sinon attention au claquage'
+            if 'travail' in question:
+                if question.author.name == 'Garma':
+                    str = 'Comme si ma réponse aller changer quelquechose'
+                else:
+                    str = 'Non c\'est pas une bonne idée'
+            elif 'aujourd\'hui' in question:
+                str = 'Non non pas aujourd\'hui'
+            await self.bot.reply(str,delete_after=5.0)
+
 
     async def on_message(self,message):
         if message.author == self.bot.user:
