@@ -9,7 +9,7 @@ def parseDate(date_str):
             print(str(d))
         return d
     elif date_str == "today":
-        return datetime.datetime.today()
+        return datetime.date(datetime.datetime.today())
     else:
         day, month = map(int, date_str.split('-'))
         my_date = datetime.date(datetime.datetime.now().year, month, day)
