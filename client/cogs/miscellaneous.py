@@ -1,5 +1,6 @@
 from discord.ext import commands
 from client.constants import adminId
+from client.constants import private_channel_id_with_admin
 import random
 import discord
 
@@ -9,6 +10,15 @@ class Miscellaneous:
         self.bot = bot
         self.annoyToggle = False
         self.msg_counter = 0
+
+    def check_pm(self,ctx):
+        return ctx.message.channel.id == private_channel_id_with_admin
+
+    @commands.command(pass_context=True,hidden=True)
+    @commands.check(check_pm)
+    async def say(self,ctx,channelId,message):
+        """Says something that has been given in private message"""
+        self.bot.send_message(channelId,message.content)
 
     @commands.command()
     async def roll(self,dice: str):
@@ -63,6 +73,50 @@ class Miscellaneous:
                 str = 'Non non pas aujourd\'hui'
             await self.bot.reply(str)
 
+    @commands.command(no_pm=True, hidden=True)
+    async def hug(self, user: discord.Member, intensity: int = 1):
+        """Hugs someone, because we're bunch of good ol' lads !
+
+        Accepts two parameters:
+        The user you want to hug as a mention
+        The intensity of the hug as an integer"""
+        name = " *" + user.mention + "*"
+        if intensity <= 0:
+            msg = "(っ˘̩╭╮˘̩)っ" + name
+        elif intensity <= 3:
+            msg = "(っ´▽｀)っ" + name
+        elif intensity <= 6:
+            msg = "╰(*´︶`*)╯" + name
+        elif intensity <= 9:
+            msg = "(つ≧▽≦)つ" + name
+        elif intensity >= 10:
+            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+        await self.bot.say(msg)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def userinfo(self, ctx, user: discord.Member = None):
+        """Shows users's informations
+
+        Shows user info, user can be given in arguments as a mention, otherwise
+        it will be the author of the command."""
+        author = ctx.message.author
+        if not user:
+            user = author
+        roles = [x.name for x in user.roles if x.name != "@everyone"]
+        if not roles: roles = ["None"]
+        data = "```python\n"
+        data += "Name: {}\n".format(user.name)
+        data += "ID: {}\n".format(user.id)
+        passed = (ctx.message.timestamp - user.created_at).days
+        data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
+        passed = (ctx.message.timestamp - user.joined_at).days
+        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        data += "Roles: {}\n".format(", ".join(roles))
+        data += "Avatar: {}\n".format(user.avatar_url)
+        data += "```"
+        await self.bot.say(data)
+
+
 
     async def on_message(self,message):
         if message.author == self.bot.user:
@@ -79,6 +133,7 @@ class Miscellaneous:
         print('------')
         newgame = discord.Game(name="with your mom")
         await self.bot.change_status(game=newgame, idle=False)
+
 
 
 def setup(bot):
