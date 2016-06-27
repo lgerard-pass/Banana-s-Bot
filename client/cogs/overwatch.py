@@ -34,10 +34,10 @@ class Overwatch:
             else:
                 f.seek(0, 2)
                 f.write(member.name + ' ' + str(datetime.datetime.now()) + '\n')
-                await self.client.reply('Inscription prise en compte pour le ' + my_date.strftime("%d/%m"))
+                await self.bot.reply('Inscription prise en compte pour le ' + my_date.strftime("%d/%m"))
             f.close()
         except ValueError:
-            await self.client.reply('Erreur dans la date donnée')
+            await self.bot.reply('Erreur dans la date donnée')
 
     @commands.command(pass_context=True,no_pm=True)
     @commands.check(ow_channel_check)
@@ -82,7 +82,8 @@ class Overwatch:
             content = f.read()
             if content == '':
                 raise FileNotFoundError()
-            await self.bot.reply(content)
+            answer = '\nRésumé des inscriptions pour le : ' + my_date.strftime("%d/%m") + '\n' + content
+            await self.bot.reply(answer)
             f.close()
         except ValueError:
             await self.bot.reply('Erreur dans la date donnee')

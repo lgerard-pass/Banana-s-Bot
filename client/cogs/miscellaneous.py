@@ -37,7 +37,7 @@ class Miscellaneous:
     async def oracle(self, ctx, question:str):
         """Answers a very important question"""
         if ctx.message.author != self.bot.user:
-            n = random.randint(0, 7) == 0
+            n = len(ctx.message.content) % 7
             if(n == 0):
                 str = 'J\'ai besoin de temps pour me concentrer !'
             elif(n == 1):
@@ -49,19 +49,19 @@ class Miscellaneous:
             elif(n == 4):
                 str = 'Oui mais honnêtement je suis pas sur, au pire lance un dé'
             elif(n == 5):
-                str = 'Concrétement c\'est mort'
+                str = 'Concrètement c\'est mort'
             elif(n == 6):
                 str = 'A mon avis non'
             elif(n == 7):
                 str = 'Non, sinon attention au claquage'
             if 'travail' in question:
-                if question.author.name == 'Garma':
-                    str = 'Comme si ma réponse aller changer quelquechose'
+                if ctx.message.author.name == 'Garma':
+                    str = 'Comme si ma réponse allait changer quelquechose'
                 else:
                     str = 'Non c\'est pas une bonne idée'
             elif 'aujourd\'hui' in question:
                 str = 'Non non pas aujourd\'hui'
-            await self.bot.reply(str,delete_after=5.0)
+            await self.bot.reply(str)
 
 
     async def on_message(self,message):
