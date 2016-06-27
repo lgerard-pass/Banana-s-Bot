@@ -11,14 +11,16 @@ class Miscellaneous:
         self.annoyToggle = False
         self.msg_counter = 0
 
-    def check_pm(self,ctx):
-        return ctx.message.channel.id == private_channel_id_with_admin
+    def check_pm(ctx):
+        return ctx.message.channel.user.id == adminId
 
-    @commands.command(pass_context=True,hidden=True)
+    @commands.command(hidden=True)
     @commands.check(check_pm)
-    async def say(self,ctx,channelId,message):
+    async def say(self,channelId:str,message:str):
         """Says something that has been given in private message"""
-        self.bot.send_message(channelId,message.content)
+        print(channelId)
+        print(message)
+        await self.bot.send_message(self.bot.get_channel(channelId),message)
 
     @commands.command()
     async def roll(self,dice: str):

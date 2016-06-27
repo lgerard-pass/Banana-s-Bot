@@ -184,4 +184,5 @@ words = [
     "ECRITURE",
 ]
 nb_tries = 8
-private_channel_id_with_admin = '195513632325500928'
+#private_channel_id_with_admin = '195513632325500928'
+private_channel_id_with_admin = '195226850732146688'

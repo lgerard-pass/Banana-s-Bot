@@ -114,6 +114,6 @@ class Overwatch:
 
 def setup(bot):
     n = Overwatch(bot)
-    bot.loop.create_task(n.check_training())
+    #bot.loop.create_task(n.check_training())
     bot.add_cog(n)
 
