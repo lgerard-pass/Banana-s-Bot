@@ -75,7 +75,7 @@ class Miscellaneous:
                 str = 'Non non pas aujourd\'hui'
             await self.bot.reply(str)
 
-    @commands.command(no_pm=True, hidden=True)
+    @commands.command(no_pm=True)
     async def hug(self, user: discord.Member, intensity: int = 1):
         """Hugs someone, because we're bunch of good ol' lads !
 
