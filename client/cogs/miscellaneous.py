@@ -76,12 +76,24 @@ class Miscellaneous:
             await self.bot.reply(str)
 
     @commands.command(no_pm=True)
-    async def hug(self, user: discord.Member, intensity: int = 1):
+    async def highfive(self,user : discord.Member):
+        """Gives someone a high five !"""
+        await self.bot.say("Hey " + user.mention + " give me five ! o/")
+
+
+    @commands.command(hidden=True)
+    async def ping(self):
+        """Pong."""
+        await self.bot.say("Pong.")
+
+    @commands.command(no_pm=True,pass_context=True)
+    async def hug(self, ctx,user: discord.Member, intensity: int = 1):
         """Hugs someone, because we're bunch of good ol' lads !
 
         Accepts two parameters:
         The user you want to hug as a mention
         The intensity of the hug as an integer"""
+        self.bot.delete_message(ctx.message)
         name = " *" + user.mention + "*"
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
