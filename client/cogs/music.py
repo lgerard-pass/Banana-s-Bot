@@ -24,8 +24,9 @@ class Music:
             self.voice = await self.bot.join_voice_channel(channel)
                  
 		
-    @commands.command(no_pm=True)
-    async def play(self,link : str):
+    @commands.command(pass_context=True,no_pm=True)
+    async def play(self,ctx,link : str):
+        await self.bot.delete_message(ctx.message)
         if not(self.voice is None):
             self.player = await self.voice.create_ytdl_player(link)
             self.player.start()
