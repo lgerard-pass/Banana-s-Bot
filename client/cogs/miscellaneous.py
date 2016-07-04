@@ -87,14 +87,13 @@ class Miscellaneous:
         await self.bot.say("Pong.")
 
     @commands.command(no_pm=True,pass_context=True)
-    async def hug(self, ctx,user: discord.Member, intensity: int = 1):
+    async def hug(self, ctx,target : discord.Member, intensity: int = 1):
         """Hugs someone, because we're bunch of good ol' lads !
 
         Accepts two parameters:
         The user you want to hug as a mention
         The intensity of the hug as an integer"""
-        self.bot.delete_message(ctx.message)
-        name = " *" + user.mention + "*"
+        name = " *" + target.mention + "*"
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
@@ -106,6 +105,28 @@ class Miscellaneous:
         elif intensity >= 10:
             msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
         await self.bot.say(msg)
+        await self.bot.delete_message(ctx.message)
+
+    @commands.command(no_pm=True, pass_context=True)
+    async def grouphug(self, ctx, target: discord.Role, intensity: int = 1):
+        """Hugs a group, because we're bunch of good ol' lads !
+
+        Accepts two parameters:
+        The role you want to hug as a mention
+        The intensity of the hug as an integer"""
+        name = " *" + target.mention + "*"
+        if intensity <= 0:
+            msg = "(っ˘̩╭╮˘̩)っ" + name
+        elif intensity <= 3:
+            msg = "(っ´▽｀)っ" + name
+        elif intensity <= 6:
+            msg = "╰(*´︶`*)╯" + name
+        elif intensity <= 9:
+            msg = "(つ≧▽≦)つ" + name
+        elif intensity >= 10:
+            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+        await self.bot.say(msg)
+        await self.bot.delete_message(ctx.message)
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, user: discord.Member = None):
