@@ -16,7 +16,7 @@ class Music:
 
     @commands.command(pass_context=True, no_pm=True)
     async def jointheparty(self, ctx, channelName : str):
-        """Joins the voice channel you are in"""
+        """Joins the voice channel given in argument"""
         channel = discord.utils.find(lambda m: m.name == channelName, ctx.message.server.channels)
         if not(channel is None):
             if not(self.voice is None):
@@ -26,15 +26,20 @@ class Music:
 		
     @commands.command(pass_context=True,no_pm=True)
     async def play(self,ctx,link : str):
+        """Plays the audio of a youtube link"""
         await self.bot.delete_message(ctx.message)
-        if not(self.voice is None):
-            self.player = await self.voice.create_ytdl_player(link)
-            self.player.start()
+        if self.player is None :
+            if not(self.voice is None):
+                self.player = await self.voice.create_ytdl_player(link)
+                self.player.start()
+            else:
+                await self.bot.reply("Connecte moi à un channel d\'abord")
         else:
-            await self.bot.reply("Connecte moi à un channel d\'abord")
+            await self.bot.reply("Il faut arreter la chanson avant d\'en lancer une autre")
 
     @commands.command(no_pm=True)
     async def stop(self):
+        """Stops the current song"""
         if not(self.player is None):
             self.player.stop()
             self.player = None

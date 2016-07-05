@@ -87,20 +87,13 @@ class Miscellaneous:
         await self.bot.say("Pong.")
 
     @commands.command(no_pm=True,pass_context=True)
-    async def hug(self, ctx,target: str, intensity: int = 1, hidden: bool = False):
+    async def hug(self, ctx,target : discord.Member, intensity: int = 1):
         """Hugs someone, because we're bunch of good ol' lads !
 
-        Accepts three parameters:
-        The user you want to hug as a string, not a mention
-        The intensity of the hug as an integer defaults to 1
-        Whether or not the message should be deleted as a boolean"""
-        newTarget = discord.utils.get(ctx.message.server.members, name=target)
-        if newTarget is None:
-            newTarget = discord.utils.get(ctx.message.server.roles, name=target)
-        if newTarget is None:
-            await self.bot.say("Je ne peux pas caliner ce qui n\'éxiste pas")
-            return
-        name = " *" + newTarget.mention + "*"
+        Accepts two parameters:
+        The user you want to hug as a mention
+        The intensity of the hug as an integer"""
+        name = " *" + target.mention + "*"
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
@@ -112,8 +105,28 @@ class Miscellaneous:
         elif intensity >= 10:
             msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
         await self.bot.say(msg)
-        if hidden:
-            await self.bot.delete_message(ctx.message)
+        await self.bot.delete_message(ctx.message)
+
+    @commands.command(no_pm=True, pass_context=True)
+    async def grouphug(self, ctx, target: discord.Role, intensity: int = 1):
+        """Hugs a group, because we're bunch of good ol' lads !
+
+        Accepts two parameters:
+        The role you want to hug as a mention
+        The intensity of the hug as an integer"""
+        name = " *" + target.mention + "*"
+        if intensity <= 0:
+            msg = "(っ˘̩╭╮˘̩)っ" + name
+        elif intensity <= 3:
+            msg = "(っ´▽｀)っ" + name
+        elif intensity <= 6:
+            msg = "╰(*´︶`*)╯" + name
+        elif intensity <= 9:
+            msg = "(つ≧▽≦)つ" + name
+        elif intensity >= 10:
+            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+        await self.bot.say(msg)
+        await self.bot.delete_message(ctx.message)
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, user: discord.Member = None):
