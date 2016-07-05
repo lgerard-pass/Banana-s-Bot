@@ -75,11 +75,21 @@ class Miscellaneous:
                 str = 'Non non pas aujourd\'hui'
             await self.bot.reply(str)
 
-    @commands.command(no_pm=True)
-    async def highfive(self,user : discord.Member):
+    def high_five(ctx):
+        if (ctx.message.content == '\o'):
+            return False
+        else:
+            return True
+
+    @commands.command(pass_context=True,no_pm=True)
+    async def highfive(self,ctx,user : discord.Member):
         """Gives someone a high five !"""
         await self.bot.say("Hey " + user.mention + " give me five ! o/")
-
+        answer = await self.bot.wait_for_message(timeout=10.0, author=user)
+        if answer is None :
+            await self.bot.say("Hey " + user.mention + " ! FUCK YOU")
+        else:
+            await self.bot.say(user.mention + "Bien joué !")
 
     @commands.command(hidden=True)
     async def ping(self):
@@ -98,7 +108,7 @@ class Miscellaneous:
         if newTarget is None:
             newTarget = discord.utils.get(ctx.message.server.roles, name=target)
         if newTarget is None:
-            await self.bot.say("Je ne peux pas caliner ce qui n\'éxiste pas")
+            await self.bot.say("Je ne peux pas caliner ce qui n\'existe pas")
             return
         name = " *" + newTarget.mention + "*"
         if intensity <= 0:
