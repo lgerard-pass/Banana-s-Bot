@@ -2,7 +2,7 @@ from client.constants import words
 import random
 
 def selectWord():
-    index = random.randint(0, len(words))
+    index = random.randint(0, len(words)-1)
     return words[index]
 
 def hang_check(message):

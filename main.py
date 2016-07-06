@@ -1,5 +1,4 @@
 from client.bananaBot import bananaBot
-from client.constants import *
 import discord 
 import logging 
 
@@ -9,6 +8,10 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-#bot = bananaBot(token_test)
+#Read token from file
+f = open('token', 'r')
+token = f.read().strip()
+
+#Launch bot 
 bot = bananaBot(token)
 bot.run()

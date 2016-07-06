@@ -75,21 +75,15 @@ class Miscellaneous:
                 str = 'Non non pas aujourd\'hui'
             await self.bot.reply(str)
 
-    def high_five(ctx):
-        if (ctx.message.content == '\o'):
-            return False
-        else:
-            return True
-
     @commands.command(pass_context=True,no_pm=True)
     async def highfive(self,ctx,user : discord.Member):
         """Gives someone a high five !"""
         await self.bot.say("Hey " + user.mention + " give me five ! o/")
-        answer = await self.bot.wait_for_message(timeout=10.0, author=user)
+        answer = await self.bot.wait_for_message(timeout=10.0, author=user, check=high_five_check)
         if answer is None :
             await self.bot.say("Hey " + user.mention + " ! FUCK YOU")
         else:
-            await self.bot.say(user.mention + "Bien joué !")
+            await self.bot.say(user.mention + " Bien joué !")
 
     @commands.command(hidden=True)
     async def ping(self):
@@ -171,3 +165,9 @@ class Miscellaneous:
 def setup(bot):
     n = Miscellaneous(bot)
     bot.add_cog(n)
+
+def high_five_check(message):
+    if (message.content == '\o'):
+        return True 
+    else:
+        return False

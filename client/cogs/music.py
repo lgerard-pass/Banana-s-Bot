@@ -16,14 +16,13 @@ class Music:
         self.playlist = deque(maxlen=3)
         discord.opus.load_opus(find_library("opus"))
 
-    @commands.command(no_pm=True)
-    async def playNextSong(self):
-        """Launch the next song in the playlist if it exists"""
+    def playNextSong(self):
         if not (self.voice is None):
             if not (self.player is None):
                 self.player.stop()
                 if(len(self.playlist) > 0):
-                    self.player = await self.voice.create_ytdl_player(self.playlist.popleft())
+                    self.player = self.playlist.popleft()
+                    self.player.start()
 
     @commands.command(pass_context=True, no_pm=True)
     async def jointheparty(self, ctx, channelName : str):
@@ -41,31 +40,47 @@ class Music:
         await self.bot.delete_message(ctx.message)
         if self.player is None :
             if not(self.voice is None):
-                self.player = await self.voice.create_ytdl_player(link)
+                self.player = await self.voice.create_ytdl_player(link,after=self.playNextSong)
                 self.player.start()
             else:
                 await self.bot.reply("Connecte moi à un channel d\'abord")
         else:
             await self.bot.reply("Il faut arreter la chanson avant d\'en lancer une autre")
 
-    @commands.command(no_pm=True)
-    async def addToList(self, link: str):
-        """Adds a song to the playlist"""
-        self.playlist.add(link)
+    @commands.command(pass_context=True,no_pm=True)
+    async def addToList(self, ctx, link: str):
+        """Adds a song to the playlist
+           No more than 3 songs can be put in the gueue before it starts removing other songs
+        """
+        await self.bot.delete_message(ctx.message)
+        self.playlist.append(await self.voice.create_ytdl_player(link,after=self.playNextSong))
+        await self.bot.reply("Chanson bien ajoutée, poulet !")
 
-    @commands.command(no_pm=True)
-    async def removeFromList(self, link: str):
-        """Removes a song from the playlist"""
-        self.playlist.remove(link)
-
-
-    @commands.command(no_pm=True)
+    @commands.command(pass_context=True,no_pm=True)
     async def stop(self):
         """Stops the current song and removes current playlist"""
+        self.bot.delete_message(ctx.message)
         self.playlist = deque(maxlen=3)
         if not(self.player is None):
             self.player.stop()
             self.player = None
+            await self.bot.reply("Playlist et lecture en cours vidées")
+    
+    @commands.command(pass_context=True,no_pm=True)
+    async def pause(self,ctx):
+        """Pauses the current song"""
+        if not(self.player is None):
+            self.player.pause()
+            await self.bot.delete_message(ctx.message)
+            await self.bot.reply("Chanson mise en pause")
+
+    @commands.command(pass_context=True,no_pm=True)
+    async def resume(self):
+        """Resumes the current song"""
+        if not(self.player is None):
+            self.player.resume()
+            await self.bot.delete_message(ctx.message)
+            await self.bot.reply("Chanson relancée")
 
 
     @commands.command(no_pm=True)
@@ -78,3 +93,4 @@ class Music:
 def setup(bot):
     n = Music(bot)
     bot.add_cog(n)
+
