@@ -4,7 +4,7 @@ from client.cogs.overwatch import setup as setup_ow
 from client.cogs.miscellaneous import setup as setup_misc
 from client.cogs.game import setup as setup_game
 from client.cogs.music import setup as setup_music
-
+from client.cogs.twitch import setup as setup_twitch
 
 class bananaBot():
     #Constructor
@@ -16,6 +16,7 @@ class bananaBot():
         setup_misc(self.client)
         setup_game(self.client)
         setup_music(self.client)
+        setup_twitch(self.client)
 
     def run(self):
         return self.client.run(self.token)

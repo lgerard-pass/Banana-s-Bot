@@ -17,9 +17,10 @@ class Music:
         discord.opus.load_opus(find_library("opus"))
 
     def playNextSong(self):
-        if not (self.voice is None):
-            if not (self.player is None):
+        if not (self.voice == None):
+            if not (self.player == None):
                 self.player.stop()
+                self.player = None
                 if(len(self.playlist) > 0):
                     self.player = self.playlist.popleft()
                     self.player.start()
@@ -28,18 +29,17 @@ class Music:
     async def jointheparty(self, ctx, channelName : str):
         """Joins the voice channel given in argument"""
         channel = discord.utils.find(lambda m: m.name == channelName, ctx.message.server.channels)
-        if not(channel is None):
-            if not(self.voice is None):
+        if not(channel == None):
+            if not(self.voice == None):
                 await self.voice.move_to(channel)
             self.voice = await self.bot.join_voice_channel(channel)
                  
-		
     @commands.command(pass_context=True,no_pm=True)
     async def play(self,ctx,link : str):
         """Plays the audio of a youtube link"""
         await self.bot.delete_message(ctx.message)
         if self.player is None :
-            if not(self.voice is None):
+            if not(self.voice == None):
                 self.player = await self.voice.create_ytdl_player(link,after=self.playNextSong)
                 self.player.start()
             else:
@@ -57,19 +57,19 @@ class Music:
         await self.bot.reply("Chanson bien ajoutée, poulet !")
 
     @commands.command(pass_context=True,no_pm=True)
-    async def stop(self):
+    async def stop(self,ctx):
         """Stops the current song and removes current playlist"""
-        self.bot.delete_message(ctx.message)
+        await self.bot.delete_message(ctx.message)
         self.playlist = deque(maxlen=3)
-        if not(self.player is None):
+        if not(self.player == None):
             self.player.stop()
-            self.player = None
-            await self.bot.reply("Playlist et lecture en cours vidées")
+        self.player = None
+        await self.bot.reply("Playlist et lecture en cours vidées")
     
     @commands.command(pass_context=True,no_pm=True)
     async def pause(self,ctx):
         """Pauses the current song"""
-        if not(self.player is None):
+        if not(self.player == None):
             self.player.pause()
             await self.bot.delete_message(ctx.message)
             await self.bot.reply("Chanson mise en pause")
@@ -77,16 +77,15 @@ class Music:
     @commands.command(pass_context=True,no_pm=True)
     async def resume(self):
         """Resumes the current song"""
-        if not(self.player is None):
+        if not(self.player == None):
             self.player.resume()
             await self.bot.delete_message(ctx.message)
             await self.bot.reply("Chanson relancée")
 
-
     @commands.command(no_pm=True)
     async def leavetheparty(self):
         """Disconnects the bot from voice chat"""
-        if not(self.voice is None):
+        if not(self.voice == None):
             await self.voice.disconnect()
 
 
