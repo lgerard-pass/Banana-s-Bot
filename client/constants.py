@@ -2,6 +2,8 @@
 clientDesc = "Bot for Banana's discord"
 bananasDiscordId = '101591369981632512'
 overwatchChannelId = '173417024825982976'
+sc2ChannelId = '101592517337677824'
+videogamesChannelId = '200260281270534145'
 adminId = '101590011652096000'
 token = 'MTk1NTEzNjMyMzI1NTAwOTI4.Ck1pGg.QXy7_6epx1q3ex-qSv3oXwjB0CQ'
 token_test = 'MTk1MjI2ODUwNzMyMTQ2Njg4.Ck2UmQ.ea5IBxu1P9XNogb2qptycQ781qk'
@@ -186,3 +188,4 @@ words = [
 nb_tries = 8
 #private_channel_id_with_admin = '195513632325500928'
 private_channel_id_with_admin = '195226850732146688'
+valid_streams_categories = ['Overwatch','Starcraft','Other']
