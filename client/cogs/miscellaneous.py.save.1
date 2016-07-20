@@ -17,31 +17,6 @@ class Miscellaneous:
     def check_pm(ctx):
         return ctx.message.channel.user.id == adminId
 
-    @commands.command(pass_context=True,no_pm=True)
-    async def courage(self,ctx,user:discord.Member,value:int):
-        """Gives a user some courage"""
-        giver = ctx.message.author
-        await self.bot.delete_message(ctx.message)
-        if not(giver.id in self.currency):
-            self.currency[giver.id] = 100
-        if not(user.id in self.currency):
-            self.currency[user.id] = 100
-        if value <= 0 or value > self.currency[giver.id]:
-            await self.bot.reply("Wesh prend moi pas pour un jambon")
-            return
-        self.currency[giver.id] -= value
-        self.currency[user.id] += value
-        await self.bot.say("{0} a donné {1} de courage a {2} !".format(giver.mention,value,user.mention))
-    
-    @commands.command(no_pm=True,pass_context=True)
-    async def courageamount(self,ctx,target:discord.Member=None):
-        """How much courage do you have"""
-        if target is None:
-            target=ctx.message.author
-        if not(target.id in self.currency):
-            self.currency[target.id] = 100
-        await self.bot.say("{0} a {1} de courage !".format(target.mention,self.currency[target.id]))
-
     @commands.command(hidden=True)
     @commands.check(check_pm)
     async def say(self,channelId:str,message:str):
@@ -158,6 +133,19 @@ class Miscellaneous:
         if hidden:
             await self.bot.delete_message(ctx.message)
 
+    @commands.command(pass_context=Trur,no_pm=True)
+    async def courage(self,ctx,user : discord.Member, number : int)
+        """Gives someone courage"""
+        giver = ctx.message.author
+        await self.bot.delete_message(ctx.message)
+        if giver.name in self.currency:
+            if number <= 0 or number > self.currency[giver.name] :
+                await self.bot.reply("Prends moi pour un jambon")
+            else:
+                if user.name in self.currency :
+                    self.
+        else:
+
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, user: discord.Member = None):
         """Shows users's informations
@@ -181,13 +169,11 @@ class Miscellaneous:
         data += "```"
         await self.bot.say(data)
 
-
-
     async def on_message(self,message):
         if message.author == self.bot.user:
             return
         self.msg_counter += 1
-        if self.annoyToggle and "dur" in message.content:
+        if self.annoyToggle and "dur" in message.content
             await self.bot.send_message(message.channel, 'Hum')
             self.msg_counter = 0
 

@@ -116,6 +116,7 @@ class Twitch:
             for element in parsedData["streams"]:
                 if element["channel"]["name"] in runningStreams:
                     stillRunning += [element["channel"]["name"]]
+                    print("Stream " + element["channel"]["name"] + " toujours en cours")
                 else:
                     str = element["channel"]["name"] + ' est en live : ' + element["channel"]["url"] + '\n' + element["preview"]["large"]
                     stillRunning += [element["channel"]["name"]]

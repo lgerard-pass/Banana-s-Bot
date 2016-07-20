@@ -12,7 +12,7 @@ class Miscellaneous:
         self.bot = bot
         self.annoyToggle = False
         self.msg_counter = 0
-        self.currency = {}
+        self.currency ={}
 
     def check_pm(ctx):
         return ctx.message.channel.user.id == adminId
@@ -29,19 +29,9 @@ class Miscellaneous:
         if value <= 0 or value > self.currency[giver.id]:
             await self.bot.reply("Wesh prend moi pas pour un jambon")
             return
-        self.currency[giver.id] -= value
-        self.currency[user.id] += value
-        await self.bot.say("{0} a donné {1} de courage a {2} !".format(giver.mention,value,user.mention))
-    
-    @commands.command(no_pm=True,pass_context=True)
-    async def courageamount(self,ctx,target:discord.Member=None):
-        """How much courage do you have"""
-        if target is None:
-            target=ctx.message.author
-        if not(target.id in self.currency):
-            self.currency[target.id] = 100
-        await self.bot.say("{0} a {1} de courage !".format(target.mention,self.currency[target.id]))
-
+        self.currency[giver.id] -= number
+        self.currency[user.id] += number
+eeru
     @commands.command(hidden=True)
     @commands.check(check_pm)
     async def say(self,channelId:str,message:str):
@@ -187,7 +177,7 @@ class Miscellaneous:
         if message.author == self.bot.user:
             return
         self.msg_counter += 1
-        if self.annoyToggle and "dur" in message.content:
+        if self.annoyToggle and "dur" in message.content
             await self.bot.send_message(message.channel, 'Hum')
             self.msg_counter = 0
 
