@@ -9,15 +9,13 @@ import asyncio
 
 polls = {}
 class Poll:
-    def __init__(self,misc,channel,question,choices,duration):
+    def __init__(self,misc,channel,question,choices):
         self.misc=misc
         self.channel = channel
         self.question = question
         self.choices = choices
         self.answers = {key:0 for key in self.choices}
         self.running = False
-        self.voters = []
-        self.duration = duration
 
     async def start(self):
         self.running = True
@@ -33,18 +31,12 @@ class Poll:
         msg.strip()
         await self.misc.bot.send_message(self.channel,msg)
         polls[self.channel.id] = self
-        await asyncio.sleep(self.duration * 60)
-        await self.stop()
+        await asyncio.sleep(30)
+        self.stop
 
-    async def stop(self):
+    def stop(self):
         if self.running:
-            await self.misc.bot.send_message(self.channel,"***Fin du sondage***")
-            result = "Résultats\n"
-            i=1
-            for key in sorted(self.answers,key=self.answers.get,reverse=True):
-                result += "{0} : {1}\n".format(key,self.answers[key])
-                i += 1
-            await self.misc.bot.send_message(self.channel,result.strip())
+            await self.misc.bot.send_message(self.channel,"poll ended")
             del polls[self.channel.id]
             self.running = False
 
@@ -59,30 +51,20 @@ class Miscellaneous:
 
     def check_pm(ctx):
         return ctx.message.channel.user.id == adminId
-
+    
     @commands.command(pass_context=True,no_pm=True)
     async def vote(self,ctx,choice:int):
-        if ctx.message.channel.id in polls:
-             currentPoll = polls[ctx.message.channel.id]
-             if ctx.message.author.id in currentPoll.voters:
-                 await self.bot.reply("Tu as déjà voté ptit malin !")
-                 return
-             else:
-                 currentPoll.voters += [ctx.message.author.id]
-                 currentPoll.answers[currentPoll.choices[choice-1]] += 1
-                 await self.bot.reply(":ok:")
+        if ctx.channel.id in polls:
+           polls[ctx.channel.id].
         else:
-             self.bot.say("Pas de sondage en cours dans ce channel")
-
+            await self.bot.reply("Pas de sondages en cours")
+            return
     @commands.command(pass_context=True,no_pm=True)
-    async def poll(self,ctx,question : str, options:str,duration:int):
-         if ctx.message.channel.id in polls:
+    async def poll(self,ctx,question : str, options:str):
+         if ctx.channel.id in polls:
              await self.bot.reply("Sondage deja en cours")
-         else:
-             if duration > 30 or duration < 1:
-                 await self.bot.reply("Temps incorrect")
-                 return
-             newPoll = Poll(self,ctx.message.channel,question,options.split(','),duration)
+         else;
+             newPoll = Poll(self,ctx.message.channel,question,options.split(','))
              await newPoll.start()
 
     
