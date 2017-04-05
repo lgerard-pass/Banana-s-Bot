@@ -14,9 +14,9 @@ class bananaBot():
         #------------------------Setting up cogs---------------------------------------------------------
         setup_ow(self.client)
         setup_misc(self.client)
-        setup_game(self.client)
-        setup_music(self.client)
-        setup_twitch(self.client)
+        #setup_game(self.client)
+        #setup_music(self.client)
+        #setup_twitch(self.client)
 
     def run(self):
         return self.client.run(self.token)

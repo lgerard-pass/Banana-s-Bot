@@ -2,6 +2,7 @@
 clientDesc = "Bot for Banana's discord"
 bananasDiscordId = '101591369981632512'
 overwatchChannelId = '173417024825982976'
+overwatchLiquipediaURL = 'http://wiki.teamliquid.net/overwatch/Main_Page'
 sc2ChannelId = '101592517337677824'
 videogamesChannelId = '200260281270534145'
 adminId = '101590011652096000'

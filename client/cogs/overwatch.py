@@ -4,6 +4,8 @@ import datetime
 from client.util.util import parseDate
 import discord
 import asyncio
+import requests
+import bs4
 
 class Overwatch:
     """Commands related to Overwatch"""
@@ -17,7 +19,7 @@ class Overwatch:
         else:
             return True
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enable=False)
     @commands.check(ow_channel_check)
     async def register(self,ctx, date: str):
         """Register for GO4 - Format : DD-MM."""
@@ -39,7 +41,7 @@ class Overwatch:
         except ValueError:
             await self.bot.reply('Erreur dans la date donnée')
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     @commands.check(ow_channel_check)
     async def unregister(self,ctx, date: str):
         """Unregister for GO4 - Format : DD-MM."""
@@ -70,7 +72,7 @@ class Overwatch:
         except LookupError:
             await self.bot.reply('Tu n\'etais pas inscrit a cette date (le ' + + my_date.strftime("%d/%m") + ')')
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     @commands.check(ow_channel_check)
     async def whoplays(self,ctx, date: str):
         """Says who registered for GO4 - Format : DD-MM."""
@@ -111,9 +113,23 @@ class Overwatch:
                     await self.bot.send_message(channel, message)
             await asyncio.sleep(3600)  # task runs every hour
 
+    @commands.command(no_pm=True)
+    async def upcomingMatches(self):
+        response = requests.get(overwatchLiquipediaURL)
+        soup = bs4.BeautifulSoup(response.text)
+        matches = soup.findAll("table",{"class": "infobox_matches_content" })
+        answer = '```'
+        for match in matches:
+            mystring = match.text.replace('\n\n', '').replace('\n', ' ').replace(' Template:Abbr/UTC', ' UTC - ')
+            answer += mystring
+            answer += "\n"
+        await self.bot.say(answer + "```")
+
+
+
 
 def setup(bot):
     n = Overwatch(bot)
-    bot.loop.create_task(n.check_training())
+    #bot.loop.create_task(n.check_training())
     bot.add_cog(n)
 
