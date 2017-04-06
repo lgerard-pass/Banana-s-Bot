@@ -14,4 +14,4 @@ token = f.read().strip()
 
 #Launch bot 
 bot = bananaBot(token)
-bot.run()
+bot.runMainLoop()

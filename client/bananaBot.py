@@ -1,5 +1,6 @@
 from discord.ext import commands
 from .constants import *
+import time
 from client.cogs.overwatch import setup as setup_ow
 from client.cogs.miscellaneous import setup as setup_misc
 from client.cogs.game import setup as setup_game
@@ -18,5 +19,8 @@ class bananaBot():
         #setup_music(self.client)
         #setup_twitch(self.client)
 
-    def run(self):
-        return self.client.run(self.token)
+    def runMainLoop(self):
+        while(True):
+            if(not self.client.is_logged_in):
+                self.client.run(self.token)
+            time.sleep(60)
