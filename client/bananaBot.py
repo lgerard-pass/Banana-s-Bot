@@ -1,6 +1,8 @@
 from discord.ext import commands
 from .constants import *
 import time
+import asyncio
+from discord import ConnectionClosed
 from client.cogs.overwatch import setup as setup_ow
 from client.cogs.miscellaneous import setup as setup_misc
 from client.cogs.game import setup as setup_game
@@ -21,6 +23,12 @@ class bananaBot():
 
     def runMainLoop(self):
         while(True):
-            if(not self.client.is_logged_in):
-                self.client.run(self.token)
-            time.sleep(60)
+            loop = asyncio.get_event_loop()
+            try:
+                loop.run_until_complete(self.client.login(self.token))
+                loop.run_until_complete(self.client.connect())
+            except KeyboardInterrupt:
+                loop.run_until_complete(self.client.logout())
+                print('test')
+            finally:
+                loop.close()
