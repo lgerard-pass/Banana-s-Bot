@@ -1,14 +1,34 @@
 from discord.ext import commands
 from client.constants import *
-import datetime
+from datetime import datetime
 from client.util.util import parseDate
+from datetime import timezone
+from datetime import timedelta
 import discord
 import asyncio
 import requests
 import bs4
+import re
+
+class Match:
+    team1 = ""
+    team2 = ""
+    date = None
+    tournament = ""
+
+    def __init__(self,team1,team2,date,tournament):
+        self.team1 = team1
+        self.team2 = team2
+        self.date = date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        self.tournament = tournament
+
+    def __str__(self):
+        return  self.team1 + ' vs. ' + self.team2 + " - " + self.date.strftime(
+                '%d/%m at %H:%M') + " for " + self.tournament
 
 class Overwatch:
     """Commands related to Overwatch"""
+    notified_matches = []
     def __init__(self, bot):
         self.bot = bot
 
@@ -94,6 +114,16 @@ class Overwatch:
 
             # This task will run in background and will remind everyone to go training 1 hour beforehand
 
+    @commands.command(no_pm=True)
+    @commands.check(ow_channel_check)
+    async def upcomingMatches(self):
+        answer = '```'
+        matches = getMatches()
+        for match in matches:
+            answer += str(match)
+            answer += "\n"
+        await self.bot.say(answer + "```")
+
     async def check_training(self):
         await self.bot.wait_until_ready()
         channel = discord.Object(id=overwatchChannelId)  # SENDS TO CHANNEL OVERWATCH IN BANANA'S DISCORD
@@ -113,23 +143,45 @@ class Overwatch:
                     await self.bot.send_message(channel, message)
             await asyncio.sleep(3600)  # task runs every hour
 
-    @commands.command(no_pm=True)
-    async def upcomingMatches(self):
-        response = requests.get(overwatchLiquipediaURL)
-        soup = bs4.BeautifulSoup(response.text)
-        matches = soup.findAll("table",{"class": "infobox_matches_content" })
-        answer = '```'
+    async def check_nextMatch(self):
+        await self.bot.wait_until_ready()
+        channel = discord.Object(id=overwatchChannelId)  # SENDS TO CHANNEL OVERWATCH IN BANANA'S DISCORD
+        matches = getMatches()
+        current_datetime = datetime.now().astimezone(tz=None)
         for match in matches:
-            mystring = match.text.replace('\n\n', '').replace('\n', ' ').replace(' Template:Abbr/UTC', ' UTC - ')
-            answer += mystring
-            answer += "\n"
-        await self.bot.say(answer + "```")
+            delta = match.date - current_datetime
+            if(match not in self.notified_matches and match.date - current_datetime > timedelta() and match.date - current_datetime < timedelta(minutes=30)):
+                message = "Match incoming : \n" + str(match)
+                await self.bot.send_message(channel, message)
+                self.notified_matches += [match]
+        await asyncio.sleep(60)  # task runs every minute
 
+
+
+def getMatches():
+    response = requests.get(overwatchLiquipediaURL)
+    soup = bs4.BeautifulSoup(response.text)
+    matches = soup.findAll("table", {"class": "infobox_matches_content"})
+    parsed_matches = []
+    for match in matches:
+        mystring = match.text.replace('\n\n', '').replace('\n', '/').replace(' Template:Abbr/UTC', ' UTC/')
+        search = re.search(r'(.*) vs. (.*)\/(.*)\/(.*)\/', mystring)
+        team1 = search.group(1)
+        team2 = search.group(2)
+
+        date = search.group(3)
+        parsed_date = datetime.strptime(date, '%B %d, %Y - %H:%M %Z')
+
+        tournament = search.group(4)
+        entire_match = Match(team1,team2,parsed_date,tournament)
+        parsed_matches += [entire_match]
+    return parsed_matches
 
 
 
 def setup(bot):
     n = Overwatch(bot)
     #bot.loop.create_task(n.check_training())
+    bot.loop.create_task(n.check_nextMatch())
     bot.add_cog(n)
 
