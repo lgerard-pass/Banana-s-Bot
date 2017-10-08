@@ -41,7 +41,7 @@ class Overwatch:
 
     @commands.command(pass_context=True,no_pm=True,enable=False)
     @commands.check(ow_channel_check)
-    async def register(self,ctx, date: str):
+    async def register(self,ctx, date : str):
         """Register for GO4 - Format : DD-MM."""
         try:
             my_date = parseDate(date)

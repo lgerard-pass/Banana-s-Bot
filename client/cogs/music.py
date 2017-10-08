@@ -1,3 +1,4 @@
+from os import listdir
 from discord.ext import commands
 from client.constants import *
 import datetime
@@ -6,7 +7,7 @@ import discord
 import asyncio
 from ctypes.util import find_library
 from collections import deque
-
+import os.path
 class Music:
     """Commands related to music playback"""
     def __init__(self, bot):
@@ -25,7 +26,30 @@ class Music:
                     self.player = self.playlist.popleft()
                     self.player.start()
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True,no_pm=True)
+    async def kaamelott(self,ctx,line : str):
+        """Plays a given kaamelott sound"""
+        await self.bot.delete_message(ctx.message)
+        filename = '/media/USBHDD/sounds/' + line + '.mp3'
+        if os.path.isfile(filename):
+            if not(self.voice == None):
+                self.player = self.voice.create_ffmpeg_player(filename)
+                self.player.start()
+            else:
+                await self.bot.reply("Connecte moi à un channel d\'abord")
+        else:
+            await self.bot.reply("Le son n'existe pas")
+    
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
+    async def listkaamelott(self,ctx):
+        """List all kamelott sounds"""
+        await self.bot.delete_message(ctx.message)
+        string = ''
+        for filename in listdir('/media/USBHDD/sounds'):
+            string = string + filename + '\n'
+        await self.bot.reply(string)
+
+    @commands.command(pass_context=True, no_pm=True,enabled=False)
     async def jointheparty(self, ctx, channelName : str):
         """Joins the voice channel given in argument"""
         channel = discord.utils.find(lambda m: m.name == channelName, ctx.message.server.channels)
@@ -34,7 +58,7 @@ class Music:
                 await self.voice.move_to(channel)
             self.voice = await self.bot.join_voice_channel(channel)
                  
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     async def play(self,ctx,link : str):
         """Plays the audio of a youtube link"""
         await self.bot.delete_message(ctx.message)
@@ -47,7 +71,7 @@ class Music:
         else:
             await self.bot.reply("Il faut arreter la chanson avant d\'en lancer une autre")
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     async def addToList(self, ctx, link: str):
         """Adds a song to the playlist
            No more than 3 songs can be put in the gueue before it starts removing other songs
@@ -56,7 +80,7 @@ class Music:
         self.playlist.append(await self.voice.create_ytdl_player(link,after=self.playNextSong))
         await self.bot.reply("Chanson bien ajoutée, poulet !")
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     async def stop(self,ctx):
         """Stops the current song and removes current playlist"""
         await self.bot.delete_message(ctx.message)
@@ -66,7 +90,7 @@ class Music:
         self.player = None
         await self.bot.reply("Playlist et lecture en cours vidées")
     
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     async def pause(self,ctx):
         """Pauses the current song"""
         if not(self.player == None):
@@ -74,7 +98,7 @@ class Music:
             await self.bot.delete_message(ctx.message)
             await self.bot.reply("Chanson mise en pause")
 
-    @commands.command(pass_context=True,no_pm=True)
+    @commands.command(pass_context=True,no_pm=True,enabled=False)
     async def resume(self):
         """Resumes the current song"""
         if not(self.player == None):
