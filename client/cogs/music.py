@@ -40,16 +40,19 @@ class Music:
         else:
             await self.bot.reply("Le son n'existe pas")
     
-    @commands.command(pass_context=True,no_pm=True,enabled=False)
+    @commands.command(pass_context=True,no_pm=True,enabled=True)
     async def listkaamelott(self,ctx):
         """List all kamelott sounds"""
         await self.bot.delete_message(ctx.message)
         string = ''
         for filename in listdir('/media/USBHDD/sounds'):
+            if len(filename) + len(string) >= 1500:
+                await self.bot.reply(string)
+                string = ''
             string = string + filename + '\n'
         await self.bot.reply(string)
 
-    @commands.command(pass_context=True, no_pm=True,enabled=False)
+    @commands.command(pass_context=True, no_pm=True,enabled=True)
     async def jointheparty(self, ctx, channelName : str):
         """Joins the voice channel given in argument"""
         channel = discord.utils.find(lambda m: m.name == channelName, ctx.message.server.channels)
